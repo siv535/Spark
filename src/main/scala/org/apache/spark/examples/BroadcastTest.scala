@@ -39,6 +39,12 @@ object BroadcastTest {
     val slices = if (args.length > 0) args(0).toInt else 2
     val num = if (args.length > 1) args(1).toInt else 1000000
 
+    /*
+    val blockSize = "4096"
+    val slices = 2
+    val num = 10000
+     * 
+     */
     val arr1 = (0 until num).toArray
     val barr1 = sc.broadcast(arr1)
 
@@ -56,3 +62,47 @@ object BroadcastTest {
   }
 }
 // scalastyle:on println
+/*
+ * Output 
+Iteration 0
+===========
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+Iteration 0 took 8497 milliseconds
+Iteration 1
+===========
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+Iteration 1 took 102 milliseconds
+Iteration 2
+===========
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+10000
+Iteration 2 took 80 milliseconds
+ * 
+ */
+*/

@@ -1,0 +1,902 @@
+Important Spark SQL Functions
+-----------------------------
+array_contains 
+array_contains(array, value) - Returns true if the array contains the value
+> SELECT array_contains(array(1, 2, 3), 2);
+ true
+ 
+cast
+cast(expr AS type) - Casts the value expr to the target data type type.
+
+Examples:
+> SELECT cast('10' as int);
+ 10 
+ 
+char_length
+char_length(expr) - Returns the character length of string data or number of bytes of binary data. The length of string data includes the trailing spaces. The length of binary data includes binary zeros.
+
+Examples:
+> SELECT char_length('Spark SQL ');
+ 10
+> SELECT CHAR_LENGTH('Spark SQL ');
+ 10
+> SELECT CHARACTER_LENGTH('Spark SQL ');
+ 10 
+ 
+coalesce
+coalesce(expr1, expr2, ...) - Returns the first non-null argument if exists. Otherwise, null.
+
+Examples:
+
+> SELECT coalesce(NULL, 1, NULL);
+ 1
+
+
+collect_list
+collect_list(expr) - Collects and returns a list of non-unique elements.
+
+
+
+collect_set
+collect_set(expr) - Collects and returns a set of unique elements.
+
+
+
+concat
+concat(str1, str2, ..., strN) - Returns the concatenation of str1, str2, ..., strN.
+
+Examples:
+
+> SELECT concat('Spark', 'SQL');
+ SparkSQL
+
+
+concat_ws
+concat_ws(sep, [str | array(str)]+) - Returns the concatenation of the strings separated by sep.
+
+Examples:
+
+> SELECT concat_ws(' ', 'Spark', 'SQL');
+  Spark SQL
+
+current_database
+current_database() - Returns the current database.
+
+Examples:
+
+> SELECT current_database();
+ default
+
+current_date
+current_date() - Returns the current date at the start of query evaluation.
+
+current_timestamp
+current_timestamp() - Returns the current timestamp at the start of query evaluation.
+
+date
+date(expr) - Casts the value expr to the target data type date.
+
+
+
+date_add
+date_add(start_date, num_days) - Returns the date that is num_days after start_date.
+
+Examples:
+
+> SELECT date_add('2016-07-30', 1);
+ 2016-07-31
+
+date_format
+date_format(timestamp, fmt) - Converts timestamp to a value of string in the format specified by the date format fmt.
+
+Examples:
+
+> SELECT date_format('2016-04-08', 'y');
+ 2016
+
+date_sub
+date_sub(start_date, num_days) - Returns the date that is num_days before start_date.
+
+Examples:
+
+> SELECT date_sub('2016-07-30', 1);
+ 2016-07-29
+
+date_trunc
+date_trunc(fmt, ts) - Returns timestamp ts truncated to the unit specified by the format model fmt. fmt should be one of ["YEAR", "YYYY", "YY", "MON", "MONTH", "MM", "DAY", "DD", "HOUR", "MINUTE", "SECOND", "WEEK", "QUARTER"]
+
+Examples:
+
+> SELECT date_trunc('2015-03-05T09:32:05.359', 'YEAR');
+ 2015-01-01T00:00:00
+> SELECT date_trunc('2015-03-05T09:32:05.359', 'MM');
+ 2015-03-01T00:00:00
+> SELECT date_trunc('2015-03-05T09:32:05.359', 'DD');
+ 2015-03-05T00:00:00
+> SELECT date_trunc('2015-03-05T09:32:05.359', 'HOUR');
+ 2015-03-05T09:00:00
+
+datediff
+datediff(endDate, startDate) - Returns the number of days from startDate to endDate.
+
+Examples:
+
+> SELECT datediff('2009-07-31', '2009-07-30');
+ 1
+
+> SELECT datediff('2009-07-30', '2009-07-31');
+ -1
+
+elt
+elt(n, input1, input2, ...) - Returns the n-th input, e.g., returns input2 when n is 2.
+
+Examples:
+
+> SELECT elt(1, 'scala', 'java');
+ scala
+
+explode
+explode(expr) - Separates the elements of array expr into multiple rows, or the elements of map expr into multiple rows and columns.
+
+Examples:
+
+> SELECT explode(array(10, 20));
+ 10
+ 20
+
+find_in_set
+find_in_set(str, str_array) - Returns the index (1-based) of the given string (str) in the comma-delimited list (str_array). Returns 0, if the string was not found or if the given string (str) contains a comma.
+
+Examples:
+
+> SELECT find_in_set('ab','abc,b,ab,c,def');
+ 3
+
+
+first
+first(expr[, isIgnoreNull]) - Returns the first value of expr for a group of rows. If isIgnoreNull is true, returns only non-null values.
+
+
+first_value
+first_value(expr[, isIgnoreNull]) - Returns the first value of expr for a group of rows. If isIgnoreNull is true, returns only non-null values.
+
+
+format_string
+format_string(strfmt, obj, ...) - Returns a formatted string from printf-style format strings.
+
+Examples:
+
+> SELECT format_string("Hello World %d %s", 100, "days");
+ Hello World 100 days
+
+
+from_json
+from_json(jsonStr, schema[, options]) - Returns a struct value with the given jsonStr and schema.
+
+Examples:
+
+> SELECT from_json('{"a":1, "b":0.8}', 'a INT, b DOUBLE');
+ {"a":1, "b":0.8}
+> SELECT from_json('{"time":"26/08/2015"}', 'time Timestamp', map('timestampFormat', 'dd/MM/yyyy'));
+ {"time":"2015-08-26 00:00:00.0"}
+
+
+from_unixtime
+from_unixtime(unix_time, format) - Returns unix_time in the specified format.
+
+Examples:
+
+> SELECT from_unixtime(0, 'yyyy-MM-dd HH:mm:ss');
+ 1970-01-01 00:00:00
+
+
+
+from_utc_timestamp
+from_utc_timestamp(timestamp, timezone) - Given a timestamp like '2017-07-14 02:40:00.0', interprets it as a time in UTC, and renders that time as a timestamp in the given time zone. For example, 'GMT+1' would yield '2017-07-14 03:40:00.0'.
+
+Examples:
+
+> SELECT from_utc_timestamp('2016-08-31', 'Asia/Seoul');
+ 2016-08-31 09:00:00
+
+
+
+get_json_object
+get_json_object(json_txt, path) - Extracts a json object from path.
+
+Examples:
+
+> SELECT get_json_object('{"a":"b"}', '$.a');
+ b
+
+
+greatest
+greatest(expr, ...) - Returns the greatest value of all parameters, skipping null values.
+
+Examples:
+
+> SELECT greatest(10, 9, 2, 4, 3);
+ 10 
+ 
+ 
+if
+if(expr1, expr2, expr3) - If expr1 evaluates to true, then returns expr2; otherwise returns expr3.
+
+Examples:
+
+> SELECT if(1 < 2, 'a', 'b');
+ a
+
+
+ifnull
+ifnull(expr1, expr2) - Returns expr2 if expr1 is null, or expr1 otherwise.
+
+Examples:
+
+> SELECT ifnull(NULL, array('2'));
+ ["2"]
+
+
+initcap
+initcap(str) - Returns str with the first letter of each word in uppercase. All other letters are in lowercase. Words are delimited by white space.
+
+Examples:
+
+> SELECT initcap('sPark sql');
+ Spark Sql
+
+
+inline
+inline(expr) - Explodes an array of structs into a table.
+
+Examples:
+
+> SELECT inline(array(struct(1, 'a'), struct(2, 'b')));
+ 1  a
+ 2  b
+
+
+input_file_block_length
+input_file_block_length() - Returns the length of the block being read, or -1 if not available.
+
+
+
+input_file_block_start
+input_file_block_start() - Returns the start offset of the block being read, or -1 if not available.
+
+
+
+input_file_name
+input_file_name() - Returns the name of the file being read, or empty string if not available.
+
+
+
+instr
+instr(str, substr) - Returns the (1-based) index of the first occurrence of substr in str.
+
+Examples:
+
+> SELECT instr('SparkSQL', 'SQL');
+ 6
+
+
+isnan
+isnan(expr) - Returns true if expr is NaN, or false otherwise.
+
+Examples:
+
+> SELECT isnan(cast('NaN' as double));
+ true
+
+
+isnotnull
+isnotnull(expr) - Returns true if expr is not null, or false otherwise.
+
+Examples:
+
+> SELECT isnotnull(1);
+ true
+
+
+isnull
+isnull(expr) - Returns true if expr is null, or false otherwise.
+
+Examples:
+
+> SELECT isnull(1);
+ false
+
+
+java_method
+java_method(class, method[, arg1[, arg2 ..]]) - Calls a method with reflection.
+
+Examples:
+
+> SELECT java_method('java.util.UUID', 'randomUUID');
+ c33fb387-8500-4bfa-81d2-6e0e3e930df2
+> SELECT java_method('java.util.UUID', 'fromString', 'a5cf6c42-0c85-418f-af6c-3e4e5b1328f2');
+ a5cf6c42-0c85-418f-af6c-3e4e5b1328f2
+
+
+json_tuple
+json_tuple(jsonStr, p1, p2, ..., pn) - Returns a tuple like the function get_json_object, but it takes multiple names. All the input parameters and output column types are string.
+
+Examples:
+
+> SELECT json_tuple('{"a":1, "b":2}', 'a', 'b');
+ 1  2
+
+
+last_day
+last_day(date) - Returns the last day of the month which the date belongs to.
+
+Examples:
+
+> SELECT last_day('2009-01-12');
+ 2009-01-31
+
+
+least
+least(expr, ...) - Returns the least value of all parameters, skipping null values.
+
+Examples:
+
+> SELECT least(10, 9, 2, 4, 3);
+ 2
+
+length
+length(expr) - Returns the character length of string data or number of bytes of binary data. The length of string data includes the trailing spaces. The length of binary data includes binary zeros.
+
+Examples:
+
+> SELECT length('Spark SQL ');
+ 10
+> SELECT CHAR_LENGTH('Spark SQL ');
+ 10
+> SELECT CHARACTER_LENGTH('Spark SQL ');
+ 10
+
+
+
+like
+str like pattern - Returns true if str matches pattern, null if any arguments are null, false otherwise.
+
+Arguments:
+
+str - a string expression
+pattern - a string expression. The pattern is a string which is matched literally, with exception to the following special symbols:
+
+_ matches any one character in the input (similar to . in posix regular expressions)
+
+% matches zero or more characters in the input (similar to .* in posix regular expressions)
+
+The escape character is '\'. If an escape character precedes a special symbol or another escape character, the following character is matched literally. It is invalid to escape any other character.
+
+Since Spark 2.0, string literals are unescaped in our SQL parser. For example, in order to match "\abc", the pattern should be "\abc".
+
+When SQL config 'spark.sql.parser.escapedStringLiterals' is enabled, it fallbacks to Spark 1.6 behavior regarding string literal parsing. For example, if the config is enabled, the pattern to match "\abc" should be "\abc".
+
+Examples:
+
+> SELECT '%SystemDrive%\Users\John' like '\%SystemDrive\%\\Users%'
+true
+Note:
+
+Use RLIKE to match with standard regular expressions.
+
+
+locate
+locate(substr, str[, pos]) - Returns the position of the first occurrence of substr in str after position pos. The given pos and return value are 1-based.
+
+Examples:
+
+> SELECT locate('bar', 'foobarbar');
+ 4
+> SELECT locate('bar', 'foobarbar', 5);
+ 7
+> SELECT POSITION('bar' IN 'foobarbar');
+ 4
+ 
+
+map
+map(key0, value0, key1, value1, ...) - Creates a map with the given key/value pairs.
+
+Examples:
+
+> SELECT map(1.0, '2', 3.0, '4');
+ {1.0:"2",3.0:"4"}
+
+
+map_keys
+map_keys(map) - Returns an unordered array containing the keys of the map.
+
+Examples:
+
+> SELECT map_keys(map(1, 'a', 2, 'b'));
+ [1,2]
+
+
+map_values
+map_values(map) - Returns an unordered array containing the values of the map.
+
+Examples:
+
+> SELECT map_values(map(1, 'a', 2, 'b'));
+ ["a","b"]
+
+
+monotonically_increasing_id
+monotonically_increasing_id() - Returns monotonically increasing 64-bit integers. The generated ID is guaranteed to be monotonically increasing and unique, but not consecutive. The current implementation puts the partition ID in the upper 31 bits, and the lower 33 bits represent the record number within each partition. The assumption is that the data frame has less than 1 billion partitions, and each partition has less than 8 billion records.
+
+
+
+month
+month(date) - Returns the month component of the date/timestamp.
+
+Examples:
+
+> SELECT month('2016-07-30');
+ 7
+
+months_between
+months_between(timestamp1, timestamp2) - Returns number of months between timestamp1 and timestamp2.
+
+Examples:
+
+> SELECT months_between('1997-02-28 10:30:00', '1996-10-30');
+ 3.94959677
+
+nanvl
+nanvl(expr1, expr2) - Returns expr1 if it's not NaN, or expr2 otherwise.
+
+Examples:
+
+> SELECT nanvl(cast('NaN' as double), 123);
+ 123.0
+
+next_day
+next_day(start_date, day_of_week) - Returns the first date which is later than start_date and named as indicated.
+
+Examples:
+
+> SELECT next_day('2015-01-14', 'TU');
+ 2015-01-20
+
+nullif
+nullif(expr1, expr2) - Returns null if expr1 equals to expr2, or expr1 otherwise.
+
+Examples:
+
+> SELECT nullif(2, 2);
+ NULL
+
+
+nvl
+nvl(expr1, expr2) - Returns expr2 if expr1 is null, or expr1 otherwise.
+
+Examples:
+
+> SELECT nvl(NULL, array('2'));
+ ["2"]
+
+
+nvl2
+nvl2(expr1, expr2, expr3) - Returns expr2 if expr1 is not null, or expr3 otherwise.
+
+Examples:
+
+> SELECT nvl2(NULL, 2, 1);
+ 1
+
+
+parse_url
+parse_url(url, partToExtract[, key]) - Extracts a part from a URL.
+
+Examples:
+
+> SELECT parse_url('http://spark.apache.org/path?query=1', 'HOST')
+ spark.apache.org
+> SELECT parse_url('http://spark.apache.org/path?query=1', 'QUERY')
+ query=1
+> SELECT parse_url('http://spark.apache.org/path?query=1', 'QUERY', 'query')
+ 1
+
+
+printf
+printf(strfmt, obj, ...) - Returns a formatted string from printf-style format strings.
+
+Examples:
+
+> SELECT printf("Hello World %d %s", 100, "days");
+ Hello World 100 days
+
+
+quarter
+quarter(date) - Returns the quarter of the year for date, in the range 1 to 4.
+
+Examples:
+
+> SELECT quarter('2016-08-31');
+ 3
+
+
+regexp_extract
+regexp_extract(str, regexp[, idx]) - Extracts a group that matches regexp.
+
+Examples:
+
+> SELECT regexp_extract('100-200', '(\d+)-(\d+)', 1);
+ 100
+
+
+regexp_replace
+regexp_replace(str, regexp, rep) - Replaces all substrings of str that match regexp with rep.
+
+Examples:
+
+> SELECT regexp_replace('100-200', '(\d+)', 'num');
+ num-num
+
+
+repeat
+repeat(str, n) - Returns the string which repeats the given string value n times.
+
+Examples:
+
+> SELECT repeat('123', 2);
+ 123123
+
+
+replace
+replace(str, search[, replace]) - Replaces all occurrences of search with replace.
+
+Arguments:
+
+str - a string expression
+search - a string expression. If search is not found in str, str is returned unchanged.
+replace - a string expression. If replace is not specified or is an empty string, nothing replaces the string that is removed from str.
+Examples:
+
+> SELECT replace('ABCabc', 'abc', 'DEF');
+ ABCDEF
+
+
+reverse
+reverse(str) - Returns the reversed given string.
+
+Examples:
+
+> SELECT reverse('Spark SQL');
+ LQS krapS
+
+
+right
+right(str, len) - Returns the rightmost len(len can be string type) characters from the string str,if len is less or equal than 0 the result is an empty string.
+
+Examples:
+
+> SELECT right('Spark SQL', 3);
+ SQL
+
+
+rlike
+str rlike regexp - Returns true if str matches regexp, or false otherwise.
+
+Arguments:
+
+str - a string expression
+regexp - a string expression. The pattern string should be a Java regular expression.
+
+Since Spark 2.0, string literals (including regex patterns) are unescaped in our SQL parser. For example, to match "\abc", a regular expression for regexp can be "^\abc$".
+
+There is a SQL config 'spark.sql.parser.escapedStringLiterals' that can be used to fallback to the Spark 1.6 behavior regarding string literal parsing. For example, if the config is enabled, the regexp that can match "\abc" is "^\abc$".
+
+Examples:
+
+When spark.sql.parser.escapedStringLiterals is disabled (default).
+> SELECT '%SystemDrive%\Users\John' rlike '%SystemDrive%\\Users.*'
+true
+
+When spark.sql.parser.escapedStringLiterals is enabled.
+> SELECT '%SystemDrive%\Users\John' rlike '%SystemDrive%\Users.*'
+true
+Note:
+
+Use LIKE to match with simple string pattern.
+
+
+
+row_number
+row_number() - Assigns a unique, sequential number to each row, starting with one, according to the ordering of rows within the window partition.
+
+
+
+sentences
+sentences(str[, lang, country]) - Splits str into an array of array of words.
+
+Examples:
+
+> SELECT sentences('Hi there! Good morning.');
+ [["Hi","there"],["Good","morning"]]
+
+
+size
+size(expr) - Returns the size of an array or a map. Returns -1 if null.
+
+Examples:
+
+> SELECT size(array('b', 'd', 'c', 'a'));
+ 4
+
+
+sort_array
+sort_array(array[, ascendingOrder]) - Sorts the input array in ascending or descending order according to the natural ordering of the array elements.
+
+Examples:
+
+> SELECT sort_array(array('b', 'd', 'c', 'a'), true);
+ ["a","b","c","d"]
+
+
+space
+space(n) - Returns a string consisting of n spaces.
+
+Examples:
+
+> SELECT concat(space(2), '1');
+   1
+
+
+split
+split(str, regex) - Splits str around occurrences that match regex.
+
+Examples:
+
+> SELECT split('oneAtwoBthreeC', '[ABC]');
+ ["one","two","three",""]
+
+
+stack
+stack(n, expr1, ..., exprk) - Separates expr1, ..., exprk into n rows.
+
+Examples:
+
+> SELECT stack(2, 1, 2, 3);
+ 1  2
+ 3  NULL
+
+str_to_map
+str_to_map(text[, pairDelim[, keyValueDelim]]) - Creates a map after splitting the text into key/value pairs using delimiters. Default delimiters are ',' for pairDelim and ':' for keyValueDelim.
+
+Examples:
+
+> SELECT str_to_map('a:1,b:2,c:3', ',', ':');
+ map("a":"1","b":"2","c":"3")
+> SELECT str_to_map('a');
+ map("a":null)
+
+
+substr
+substr(str, pos[, len]) - Returns the substring of str that starts at pos and is of length len, or the slice of byte array that starts at pos and is of length len.
+
+Examples:
+
+> SELECT substr('Spark SQL', 5);
+ k SQL
+> SELECT substr('Spark SQL', -3);
+ SQL
+> SELECT substr('Spark SQL', 5, 1);
+ k
+
+
+substring
+substring(str, pos[, len]) - Returns the substring of str that starts at pos and is of length len, or the slice of byte array that starts at pos and is of length len.
+
+Examples:
+
+> SELECT substring('Spark SQL', 5);
+ k SQL
+> SELECT substring('Spark SQL', -3);
+ SQL
+> SELECT substring('Spark SQL', 5, 1);
+ k
+
+
+substring_index
+substring_index(str, delim, count) - Returns the substring from str before count occurrences of the delimiter delim. If count is positive, everything to the left of the final delimiter (counting from the left) is returned. If count is negative, everything to the right of the final delimiter (counting from the right) is returned. The function substring_index performs a case-sensitive match when searching for delim.
+
+Examples:
+
+> SELECT substring_index('www.apache.org', '.', 2);
+ www.apache
+
+
+to_date
+to_date(date_str[, fmt]) - Parses the date_str expression with the fmt expression to a date. Returns null with invalid input. By default, it follows casting rules to a date if the fmt is omitted.
+
+Examples:
+
+> SELECT to_date('2009-07-30 04:17:52');
+ 2009-07-30
+> SELECT to_date('2016-12-31', 'yyyy-MM-dd');
+ 2016-12-31
+
+to_json
+to_json(expr[, options]) - Returns a json string with a given struct value
+
+Examples:
+
+> SELECT to_json(named_struct('a', 1, 'b', 2));
+ {"a":1,"b":2}
+> SELECT to_json(named_struct('time', to_timestamp('2015-08-26', 'yyyy-MM-dd')), map('timestampFormat', 'dd/MM/yyyy'));
+ {"time":"26/08/2015"}
+> SELECT to_json(array(named_struct('a', 1, 'b', 2));
+ [{"a":1,"b":2}]
+> SELECT to_json(map('a', named_struct('b', 1)));
+ {"a":{"b":1}}
+> SELECT to_json(map(named_struct('a', 1),named_struct('b', 2)));
+ {"[1]":{"b":2}}
+> SELECT to_json(map('a', 1));
+ {"a":1}
+> SELECT to_json(array((map('a', 1))));
+ [{"a":1}]
+
+
+
+to_timestamp
+to_timestamp(timestamp[, fmt]) - Parses the timestamp expression with the fmt expression to a timestamp. Returns null with invalid input. By default, it follows casting rules to a timestamp if the fmt is omitted.
+
+Examples:
+
+> SELECT to_timestamp('2016-12-31 00:12:00');
+ 2016-12-31 00:12:00
+> SELECT to_timestamp('2016-12-31', 'yyyy-MM-dd');
+ 2016-12-31 00:00:00
+
+
+
+to_unix_timestamp
+to_unix_timestamp(expr[, pattern]) - Returns the UNIX timestamp of the given time.
+
+Examples:
+
+> SELECT to_unix_timestamp('2016-04-08', 'yyyy-MM-dd');
+ 1460041200
+
+
+
+to_utc_timestamp
+to_utc_timestamp(timestamp, timezone) - Given a timestamp like '2017-07-14 02:40:00.0', interprets it as a time in the given time zone, and renders that time as a timestamp in UTC. For example, 'GMT+1' would yield '2017-07-14 01:40:00.0'.
+
+Examples:
+
+> SELECT to_utc_timestamp('2016-08-31', 'Asia/Seoul');
+ 2016-08-30 15:00:00
+
+
+
+translate
+translate(input, from, to) - Translates the input string by replacing the characters present in the from string with the corresponding characters in the to string.
+
+Examples:
+
+> SELECT translate('AaBbCc', 'abc', '123');
+ A1B2C3
+
+
+trim
+trim(str) - Removes the leading and trailing space characters from str.
+
+trim(BOTH trimStr FROM str) - Remove the leading and trailing trimStr characters from str
+
+trim(LEADING trimStr FROM str) - Remove the leading trimStr characters from str
+
+trim(TRAILING trimStr FROM str) - Remove the trailing trimStr characters from str
+
+Arguments:
+
+str - a string expression
+trimStr - the trim string characters to trim, the default value is a single space
+BOTH, FROM - these are keywords to specify trimming string characters from both ends of the string
+LEADING, FROM - these are keywords to specify trimming string characters from the left end of the string
+TRAILING, FROM - these are keywords to specify trimming string characters from the right end of the string
+Examples:
+
+> SELECT trim('    SparkSQL   ');
+ SparkSQL
+> SELECT trim('SL', 'SSparkSQLS');
+ parkSQ
+> SELECT trim(BOTH 'SL' FROM 'SSparkSQLS');
+ parkSQ
+> SELECT trim(LEADING 'SL' FROM 'SSparkSQLS');
+ parkSQLS
+> SELECT trim(TRAILING 'SL' FROM 'SSparkSQLS');
+ SSparkSQ
+
+
+trunc
+trunc(date, fmt) - Returns date with the time portion of the day truncated to the unit specified by the format model fmt. fmt should be one of ["year", "yyyy", "yy", "mon", "month", "mm"]
+
+Examples:
+
+> SELECT trunc('2009-02-12', 'MM');
+ 2009-02-01
+> SELECT trunc('2015-10-27', 'YEAR');
+ 2015-01-01 
+ 
+
+unix_timestamp
+unix_timestamp([expr[, pattern]]) - Returns the UNIX timestamp of current or specified time.
+
+Examples:
+
+> SELECT unix_timestamp();
+ 1476884637
+> SELECT unix_timestamp('2016-04-08', 'yyyy-MM-dd');
+ 1460041200
+
+ 
+uuid
+uuid() - Returns an universally unique identifier (UUID) string. The value is returned as a canonical UUID 36-character string.
+
+Examples:
+
+> SELECT uuid();
+ 46707d92-02f4-4817-8116-a4c3b23e6266
+ 
+ 
+when
+CASE WHEN expr1 THEN expr2 [WHEN expr3 THEN expr4]* [ELSE expr5] END - When expr1 = true, returns expr2; else when expr3 = true, returns expr4; else returns expr5.
+
+Arguments:
+
+expr1, expr3 - the branch condition expressions should all be boolean type.
+expr2, expr4, expr5 - the branch value expressions and else value expression should all be same type or coercible to a common type.
+Examples:
+
+> SELECT CASE WHEN 1 > 0 THEN 1 WHEN 2 > 0 THEN 2.0 ELSE 1.2 END;
+ 1
+> SELECT CASE WHEN 1 < 0 THEN 1 WHEN 2 > 0 THEN 2.0 ELSE 1.2 END;
+ 2
+> SELECT CASE WHEN 1 < 0 THEN 1 WHEN 2 < 0 THEN 2.0 END;
+ NULL
+
+
+window
+
+
+xpath
+xpath(xml, xpath) - Returns a string array of values within the nodes of xml that match the XPath expression.
+
+Examples:
+
+> SELECT xpath('<a><b>b1</b><b>b2</b><b>b3</b><c>c1</c><c>c2</c></a>','a/b/text()');
+ ['b1','b2','b3']
+
+
+xpath_long
+xpath_long(xml, xpath) - Returns a long integer value, or the value zero if no match is found, or a match is found but the value is non-numeric.
+
+Examples:
+
+> SELECT xpath_long('<a><b>1</b><b>2</b></a>', 'sum(a/b)');
+ 3
+
+
+xpath_number
+xpath_number(xml, xpath) - Returns a double value, the value zero if no match is found, or NaN if a match is found but the value is non-numeric.
+
+Examples:
+
+> SELECT xpath_number('<a><b>1</b><b>2</b></a>', 'sum(a/b)');
+ 3.0
+
+
+xpath_string
+xpath_string(xml, xpath) - Returns the text contents of the first xml node that matches the XPath expression.
+
+Examples:
+
+> SELECT xpath_string('<a><b>b</b><c>cc</c></a>','a/c');
+ cc
+ 
